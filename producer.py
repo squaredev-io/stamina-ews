@@ -17,19 +17,19 @@ producer = KafkaProducer(
 """
 Send data for the PCR case.
 """
-# for e in range(10):
-#     data = dict(
-#         type=EventType.pcr,
-#         positive_percentage=4,
-#         country="GR",
-#         region="Chania",
-#         date_created=(datetime.now() - timedelta(days=e)).strftime("%Y-%m-%d"),
-#     )
+for e in range(10):
+    data = dict(
+        type=EventType.pcr,
+        positive_percentage=4,
+        country="GR",
+        region="Chania",
+        date_created=(datetime.now() - timedelta(days=e)).strftime("%Y-%m-%d"),
+    )
 
-#     producer.send("RE", value=data)
-#     print("Sent type: ", data["type"], e)
+    producer.send("RE", value=data)
+    print("Sent type: ", data["type"], e)
 
-#     sleep(2)
+    sleep(2)
 
 
 """
