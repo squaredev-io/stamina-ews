@@ -108,3 +108,41 @@ class DeathsAction:
 
         # TODO: define steady / increasing
         pass
+
+
+class WSMAAction:
+    """
+    WSMA
+
+    EWS will not calculate rules for the case of WSMA.
+    WSMA will send a message to Kafka with the warnings about every 6 hours
+    (a warnings report will be send always, but there not always is an alert or warning.
+    EWS has to check it).
+    For each key in words_stats (eg. in schema “flu”, “symptoms”, “Covid”)
+    check warning0 if at least one of them is True, then we have a warning.
+    """
+
+    def execute(self):
+        print("Running WSMAAction")
+
+        cursor = db.wsma.find()
+        for doc in cursor:
+            # Check the amount of positives
+            report = self.process_entry(doc)
+            # Save alert or warning
+            db.report.insert_one(report)
+
+    def process_entry(self, entry):
+        for word in entry["words_stats"]:
+            if (
+                word["all"]["warning0"] == "True"
+                or word["geo_country"]["warning0"] == "True"
+            ):
+                report = dict(
+                    processed_at=datetime.now(),
+                    status="warning",
+                    # country=entry["country"],
+                    # region=entry["region"],
+                    document=entry,
+                )
+                return report
