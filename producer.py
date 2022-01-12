@@ -10,8 +10,10 @@ This producer is created for testing purposes. Also it can be used as a replacem
 """
 
 producer = KafkaProducer(
-    bootstrap_servers=["localhost:9092"],
-    value_serializer=lambda x: dumps(x, default=json_util.default).encode("utf-8"),
+    bootstrap_servers=["127.0.0.1:9092"],
+    security_protocol="SSL",
+    value_serializer=lambda x: dumps(
+        x, default=json_util.default).encode("utf-8"),
 )
 
 """
