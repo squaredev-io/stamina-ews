@@ -39,7 +39,7 @@ def check_ST_data(st):
         status = "Alert"
         return status
     else:
-        status = "No actions needed"
+        status = "No actions needed."
         return status
 
 
@@ -52,7 +52,7 @@ def check_HR_data(hr):
         status = "Alert"
         return status
     else:
-        status = "No actions needed"
+        status = "No actions needed."
         return status
 
 
@@ -65,7 +65,7 @@ def check_BO_data(bo):
         status = "Alert"
         return status
     else:
-        status = "No actions needed"
+        status = "No actions needed."
         return status
 
 
@@ -82,14 +82,30 @@ async def data_posted(item: SchemaProperties):
 
     measurement = item.measurement
     time = item.time
+
     blood_oxygenProperties = item.fields.properties.blood_oxygen.properties
+    heart_rateProperties = item.fields.properties.heart_rate.properties
+    skin_temperatureProperties = item.fields.properties.skin_temperature.properties
+
     blood_oxygenValue = blood_oxygenProperties.value
     blood_oxygenUnit = blood_oxygenProperties.unit
+    heart_rateValue = heart_rateProperties.value
+    heart_rateUnit = heart_rateProperties.unit
+    skin_temperatureValue = skin_temperatureProperties.value
+    skin_temperatureUnit = skin_temperatureProperties.unit
 
-    status = check_BO_data(blood_oxygenValue)
+    if blood_oxygenValue:
+        bo_status = check_BO_data(blood_oxygenValue)
+    if heart_rateValue:
+        hr_status = check_HR_data(heart_rateValue)
+    if skin_temperatureValue:
+        st_status = check_ST_data(skin_temperatureValue)
 
     healthData = [{"Measurement": measurement, "Time": time,
-                   "Blood_oxygenValue": blood_oxygenValue, "Blood_oxygenUnit": blood_oxygenUnit, "Status": status}]
+                   "Blood Oxygen Value": blood_oxygenValue, "Blood Oxygen Unit": blood_oxygenUnit,
+                   "Heart Rate Value": heart_rateValue, "Heart Rate Unit": heart_rateUnit,
+                   "Skin Temperature Value": skin_temperatureValue, "Skin Temperature Unit": skin_temperatureUnit,
+                   "Blood Oxygen Status": bo_status, "Heart Rate Status": hr_status, "Skin Temperature Status": st_status}]
 
     for data in healthData:
         collection.insert_one(data)
