@@ -146,3 +146,41 @@ class WSMAAction:
                     document=entry,
                 )
                 return report
+
+
+def check_BO_data(bo):
+    # bo stands for blood_oxygen
+    if bo <= 90 and bo >= 85:
+        status = "Warning"
+        return status
+    elif bo < 85:
+        status = "Alert"
+        return status
+    else:
+        status = "No actions needed."
+        return status
+
+def check_ST_data(st):
+    # st stands for skin_temperature
+    if st > 37 and st < 37.5:
+        status = "Warning"
+        return status
+    elif st < 28 or st >= 37.5:
+        status = "Alert"
+        return status
+    else:
+        status = "No actions needed."
+        return status
+
+
+def check_HR_data(hr):
+    # hr stands for heart_rate
+    if hr > 100 and hr < 105:
+        status = "Warning"
+        return status
+    elif hr >= 105 or hr < 60:
+        status = "Alert"
+        return status
+    else:
+        status = "No actions needed."
+        return status
