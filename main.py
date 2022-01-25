@@ -40,7 +40,7 @@ async def blood_oxygen(item: schemaBO):
 @app.post("/heart_rate")
 async def heart_rate(item: schemaHR):
     try:
-        conn = MongoClient("mongodb://localhost:27017/")
+        conn = MongoClient(connection_string)
         print("MongoDB connected successfully!!!")
     except:
         print("Could not connect to MongoDB")
@@ -66,7 +66,7 @@ async def heart_rate(item: schemaHR):
 @app.post("/skin_temp")
 async def skin_temp(item: schemaST):
     try:
-        conn = MongoClient("mongodb://localhost:27017/")
+        conn = MongoClient(connection_string)
         print("MongoDB connected successfully!!!")
     except:
         print("Could not connect to MongoDB")
