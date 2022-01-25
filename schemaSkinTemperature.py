@@ -11,7 +11,7 @@ class SchemaSkinTemperature(BaseModel):
 
 
 class SchemaFieldsProperties(BaseModel):
-    heart_rate: SchemaSkinTemperature = Field(...)
+    skin_temp: SchemaSkinTemperature = Field(...)
 
 
 class SchemaFields(BaseModel):

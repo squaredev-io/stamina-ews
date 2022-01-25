@@ -76,7 +76,7 @@ async def skin_temp_posted(item: schemaST):
 
     measurement = item.measurement
     time = item.time
-    skin_temperature_properties = item.fields.properties.skin_temperature.properties
+    skin_temperature_properties = item.fields.properties.skin_temp.properties
     skin_temperature_value = skin_temperature_properties.value
     skin_temperature_unit = skin_temperature_properties.unit
     st_status = check_ST_data(skin_temperature_value)
