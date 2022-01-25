@@ -4,13 +4,17 @@ from actions import check_BO_data, check_HR_data, check_ST_data
 from schemaBloodOxygen import SchemaProperties as schemaBO
 from schemaHeartRate import SchemaProperties as schemaHR
 from schemaSkinTemperature import SchemaProperties as schemaST
+import os
+
 
 app = FastAPI()
+connection_string = os.getenv("CONNECTION_STRING", "mongodb://localhost:27017/stamina_ews")
+print(connection_string)
 
 @app.post("/blood_oxygen")
 async def blood_oxygen_posted(item: schemaBO):
     try:
-        conn = MongoClient("mongodb://localhost:27017/")
+        conn = MongoClient(connection_string)
         print("MongoDB connected successfully!!!")
     except:
         print("Could not connect to MongoDB")
