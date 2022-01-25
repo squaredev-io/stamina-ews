@@ -12,7 +12,7 @@ connection_string = os.getenv("CONNECTION_STRING", "mongodb://localhost:27017/st
 print(connection_string)
 
 @app.post("/blood_oxygen")
-async def blood_oxygen_posted(item: schemaBO):
+async def blood_oxygen(item: schemaBO):
     try:
         conn = MongoClient(connection_string)
         print("MongoDB connected successfully!!!")
@@ -38,7 +38,7 @@ async def blood_oxygen_posted(item: schemaBO):
 
 
 @app.post("/heart_rate")
-async def heart_rate_posted(item: schemaHR):
+async def heart_rate(item: schemaHR):
     try:
         conn = MongoClient("mongodb://localhost:27017/")
         print("MongoDB connected successfully!!!")
@@ -64,7 +64,7 @@ async def heart_rate_posted(item: schemaHR):
 
 
 @app.post("/skin_temp")
-async def skin_temp_posted(item: schemaST):
+async def skin_temp(item: schemaST):
     try:
         conn = MongoClient("mongodb://localhost:27017/")
         print("MongoDB connected successfully!!!")
