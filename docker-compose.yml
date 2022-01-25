@@ -4,6 +4,6 @@ services:
   rule_engine_api:
     image: sqdhub/stamina-ews
     environment:
-      - CONNECTION_STRING=mongodb://general5da4af7fcc46d8d1b7b83275.119.150.174:27017/stamina_ews
+      - CONNECTION_STRING="change this"
     ports:
       - "8000:8000"
