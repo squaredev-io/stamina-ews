@@ -3,7 +3,7 @@ from pydantic import BaseModel, Field
 
 class SchemaSkinTempProperties(BaseModel):
     unit: str
-    value: int
+    value: float
 
 
 class SchemaSkinTemperature(BaseModel):

@@ -3,7 +3,7 @@ from pydantic import BaseModel, Field
 
 class SchemaBloodOxProperties(BaseModel):
     unit: str
-    value: int
+    value: float
 
 
 class SchemaBloodOx(BaseModel):

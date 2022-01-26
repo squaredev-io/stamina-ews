@@ -3,7 +3,7 @@ from pydantic import BaseModel, Field
 
 class SchemaHeartRateProperties(BaseModel):
     unit: str
-    value: int
+    value: float
 
 
 class SchemaHeartRate(BaseModel):
