@@ -1,4 +1,6 @@
 from mongo import db
+import pymongo
+from pymongo import MongoClient
 from datetime import date, datetime, timedelta
 
 
@@ -151,25 +153,26 @@ class WSMAAction:
 def check_BO_data(bo):
     # bo stands for blood_oxygen
     if bo <= 90 and bo >= 85:
-        status = "Warning"
+        status = "warning"
         return status
     elif bo < 85:
         status = "Alert"
         return status
     else:
-        status = "No actions needed."
+        status = "no actions needed"
         return status
+
 
 def check_ST_data(st):
     # st stands for skin_temperature
     if st > 37 and st < 37.5:
-        status = "Warning"
+        status = "warning"
         return status
     elif st < 28 or st >= 37.5:
         status = "Alert"
         return status
     else:
-        status = "No actions needed."
+        status = "no actions needed"
         return status
 
 
@@ -179,8 +182,40 @@ def check_HR_data(hr):
         status = "Warning"
         return status
     elif hr >= 105 or hr < 60:
-        status = "Alert"
+        status = "alert"
         return status
     else:
-        status = "No actions needed."
+        status = "no actions needed"
         return status
+
+
+def calculate_rules_on_smartko_data(measurement, value):
+    if measurement == "blood_oxygen":
+        status = check_BO_data(value)
+    elif measurement == "heart_rate":
+        status = check_HR_data(value)
+    elif measurement == "skin_temperature":
+        status = check_ST_data(value)
+    else:
+        status = "no actions needed"
+    return status
+
+
+def find_geolocation_from_db(mac_address, database):
+    """
+    Finds the last time's geolocation of specific mac address
+    and then return latitude and longitude
+    """
+
+    geolocation_collection = database.geo
+    list_of_docs = []
+    for doc in geolocation_collection.find({"mac_address": mac_address}).sort(
+        "time", pymongo.DESCENDING
+    ):
+        doc.pop("_id")
+        list_of_docs.append(doc)
+    if len(list_of_docs) > 0:
+        last_time_geo = list_of_docs[0]
+        return last_time_geo["latitude"], last_time_geo["longitude"]
+    else:
+        return None, None
