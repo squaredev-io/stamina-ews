@@ -1,4 +1,5 @@
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 from pymongo import MongoClient
 from actions import calculate_rules_on_smartko_data, find_geolocation_from_db
 from new_schema import BasicSchema as bs
@@ -10,6 +11,18 @@ from typing import List
 
 
 app = FastAPI()
+origins = [
+"*"
+]
+
+app.add_middleware(
+CORSMiddleware,
+allow_origins=origins,
+allow_credentials=True,
+allow_methods=["*"],
+allow_headers=["*"],
+)
+
 connection_string = os.getenv(
     "CONNECTION_STRING", "mongodb://localhost:27017/stamina_ews"
 )
