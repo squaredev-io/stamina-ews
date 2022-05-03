@@ -7,6 +7,7 @@ class SchemaTags(BaseModel):
     host: str
     region: str
     macAddress: str
+    name: str
 
 
 class SchemaValue(BaseModel):

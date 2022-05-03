@@ -2,6 +2,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from pymongo import MongoClient
 from actions import calculate_rules_on_smartko_data, find_geolocation_from_db
+from confuent_producer import kafka_producer
 from new_schema import BasicSchema as bs
 from schemaBloodOxygen import SchemaProperties as schemaBO
 from schemaHeartRate import SchemaProperties as schemaHR
@@ -49,6 +50,7 @@ async def smartko_data(items: List[bs]):
         host = tags["host"]
         region = tags["region"]
         mac_address = tags["macAddress"]
+        name = tags["name"]
         fields = dict(item.fields)
         keys_in_fields = list(fields.keys())
         first_key = keys_in_fields[0]
@@ -68,6 +70,7 @@ async def smartko_data(items: List[bs]):
                 "longitude": longitude,
                 "unit": unit,
                 "mac_address": mac_address,
+                "name": name
             }
 
             list_to_return.append(geo_data.copy())
@@ -88,10 +91,13 @@ async def smartko_data(items: List[bs]):
                 "latitude": latitude,
                 "longitude": longitude,
                 "mac_address": mac_address,
-                "status": status,
+                "name": name,
+                "status": status
             }
 
             list_to_return.append(health_data.copy())
             health_collection.insert_one(health_data)
+
+    kafka_producer(list_to_return)
 
     return list_to_return
