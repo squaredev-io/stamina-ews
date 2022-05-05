@@ -50,7 +50,12 @@ async def smartko_data(items: List[bs]):
         host = tags["host"]
         region = tags["region"]
         mac_address = tags["macAddress"]
-        name = tags["name"]
+
+        if "name" in tags:
+            name = tags["name"]
+        else:
+            name = None
+        
         fields = dict(item.fields)
         keys_in_fields = list(fields.keys())
         first_key = keys_in_fields[0]
@@ -70,7 +75,6 @@ async def smartko_data(items: List[bs]):
                 "longitude": longitude,
                 "unit": unit,
                 "mac_address": mac_address,
-                "name": name
             }
 
             list_to_return.append(geo_data.copy())
