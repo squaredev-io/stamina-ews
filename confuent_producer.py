@@ -29,24 +29,29 @@ def kafka_producer(message):
             'bootstrap.servers': "116.202.190.91:9092"
         }
     )
-
-    message_value = serializer(message)
-    # message_key = {
-    #     "format": "JSON",
-    #     "content": "excess-mortality-prediction",
-    #     "sender": "john.zaras@squaredev.io",
-    #     "host": "squaredev.io",
-    #     "program": "wsma-main.py",
-    #     "timestamp": "2022-03-14T15:34:10Z",
-    #     "trainingID": ""
-    # }
-
+    basic_structure = {
+        "server": "squaredev.io",
+        "source": "EWS"
+    }
+    message_structure = basic_structure
+    message_structure["entities"] = message
+    message_value = serializer(message_structure)
+    message_key = {
+         "format": "JSON",
+         "content": "smartko-related-alert",
+         "sender": "john.zaras@squaredev.io",
+         "host": "squaredev.io",
+         "program": "ews-main.py",
+         "timestamp": "2022-03-14T15:34:10Z",
+         "trainingID": ""
+     }
+    
     try:
         print()
         producer.poll(timeout=0)
         producer.produce(
             topic="STAMINA.ALL.EWS.EWS",
-            # key=serializer(message_key),
+            key=serializer(message_key),
             value=message_value,
             on_delivery=delivery_report
         )
