@@ -76,14 +76,13 @@ async def smartko_data(items: List[bs]):
                 "longitude": longitude,
                 "unit": unit,
                 "mac_address": mac_address,
+                "status": "no actions needed"
             }
 
             list_to_return.append(geo_data.copy())
-            geolocation_collection.insert_one(geo_data)
-
-            # Add status for geolocation sent in Kafka
-            geo_data["status"] = "no actions needed"
+            
             kafka_producer(geo_data)
+            geolocation_collection.insert_one(geo_data)
         else:
             value = dict(fields[first_key])["value"]
             status = calculate_rules_on_smartko_data(measurement, value)
