@@ -41,7 +41,8 @@ async def smartko_data(items: List[bs]):
     db = conn.ews
     health_collection = db.health
     geolocation_collection = db.geo
-
+    # The list is returned from the API
+    # Kafka will get one record at a time
     list_to_return = []
     for item in items:
         measurement = item.measurement
@@ -80,6 +81,9 @@ async def smartko_data(items: List[bs]):
             list_to_return.append(geo_data.copy())
             geolocation_collection.insert_one(geo_data)
 
+            # Add status for geolocation sent in Kafka
+            geo_data["status"] = "no actions needed"
+            kafka_producer(geo_data)
         else:
             value = dict(fields[first_key])["value"]
             status = calculate_rules_on_smartko_data(measurement, value)
@@ -100,8 +104,7 @@ async def smartko_data(items: List[bs]):
             }
 
             list_to_return.append(health_data.copy())
+            
+            kafka_producer(health_data) 
             health_collection.insert_one(health_data)
-
-    kafka_producer(list_to_return)
-
     return list_to_return
