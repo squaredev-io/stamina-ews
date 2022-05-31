@@ -39,7 +39,7 @@ def kafka_producer(message):
     message_key = {
          "format": "JSON",
          "content": "smartko-related-alert",
-         "sender": "john.zaras@squaredev.io",
+         "sender": "innovation@squaredev.io",
          "host": "squaredev.io",
          "program": "ews-main.py",
          "timestamp": "2022-03-14T15:34:10Z",
