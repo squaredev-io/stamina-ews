@@ -1,0 +1,76 @@
+{
+    "topic": "STAMINA.ALL.EWS.EWS",
+    "key": {
+        "format": "JSON",
+        "content": "smartko-related-alert",
+        "sender": "innovation@squaredev.io",
+        "host": "squaredev.io",
+        "program": "ews-main.py",
+        "timestamp": "2022-03-14T15:34:10Z",
+        "trainingID": ""
+    },
+    "value": {
+        "server": "squaredev.io",
+        "source": "EWS",
+        "entities": [
+            {
+                "measurement": "heart_rate",
+                "host": "string",
+                "time": 0,
+                "value": 0.0,
+                "unit": "string",
+                "region": "string",
+                "latidude": 0.0,
+                "longitude": 0.0,
+                "mac_address": "string",
+                "name": "string",
+                "status": "alert"
+            }
+        ]
+    }
+}
+
+{
+    "topic": "STAMINA.ALL.EWS.EWS",
+    "key": {
+        "format": "JSON",
+        "content": "smartko-related-alert",
+        "sender": "innovation@squaredev.io",
+        "host": "squaredev.io",
+        "program": "ews-main.py",
+        "timestamp": "2022-03-14T15:34:10Z",
+        "trainingID": ""
+    },
+    "value": {
+        "server": "squaredev.io",
+        "source": "EWS",
+        "entities": [
+            {
+                "measurement": "heart_rate",
+                "host": "string",
+                "time": 0,
+                "value": 0.0,
+                "unit": "string",
+                "region": "string",
+                "latidude": 0.0,
+                "longitude": 0.0,
+                "mac_address": "string",
+                "name": "string",
+                "status": "alert"
+            },
+            {
+                "measurement": "blood_oxygen",
+                "host": "string",
+                "time": 0,
+                "value": 0.0,
+                "unit": "string",
+                "region": "string",
+                "latidude": 0.0,
+                "longitude": 0.0,
+                "mac_address": "string",
+                "name": "string",
+                "status": "alert"
+            }
+        ]
+    }
+}
