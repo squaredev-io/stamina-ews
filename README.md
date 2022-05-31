@@ -11,6 +11,15 @@ After the engine identifies an alert or warning it will save it in the database 
 
 ### Run locally fastapi server
 
-In order to run the application throgh uvicorn use:
+In order to run the application through uvicorn use:
 
 `uvicorn main:app --host 0.0.0.0 --port 8000`
+
+### Run the app with docker
+
+In order to run the application through docker use:
+
+`docker-compose up -d`
+
+In case that need to setup and check the kafka locally uncomment zookeeper and kafka
+in docker-compose.yml

@@ -3,6 +3,7 @@ import pymongo
 from pymongo import MongoClient
 from datetime import date, datetime, timedelta
 
+from utils import *
 
 class DailyPCRPositivityRateAction:
     """
@@ -156,7 +157,7 @@ def check_BO_data(bo):
         status = "warning"
         return status
     elif bo < 85:
-        status = "Alert"
+        status = "alert"
         return status
     else:
         status = "no actions needed"
@@ -169,7 +170,7 @@ def check_ST_data(st):
         status = "warning"
         return status
     elif st < 28 or st >= 37.5:
-        status = "Alert"
+        status = "alert"
         return status
     else:
         status = "no actions needed"
@@ -179,7 +180,7 @@ def check_ST_data(st):
 def check_HR_data(hr):
     # hr stands for heart_rate
     if hr > 100 and hr < 105:
-        status = "Warning"
+        status = "warning"
         return status
     elif hr >= 105 or hr < 60:
         status = "alert"
@@ -219,3 +220,158 @@ def find_geolocation_from_db(mac_address, database):
         return last_time_geo["latitude"], last_time_geo["longitude"]
     else:
         return None, None
+
+def check_param_BO_data(bo, trial_params):
+    # bo stands for blood_oxygen
+    bo_params = trial_params["blood_oxygen"]
+    if  bo > bo_params["alert_low"] and bo <= bo_params["warning_low"]:
+        status = "warning"
+        return status
+    elif bo <= bo_params["alert_low"]:
+        status = "alert"
+        return status
+    else:
+        status = "no actions needed"
+        return status
+
+def check_param_HR_data(hr, trial_params):
+    # hr stands for heart_rate
+    hr_params = trial_params["heart_rate"]
+    if ( hr > hr_params["alert_low"] and hr <= hr_params["warning_low"]) | ( hr > hr_params["regular_low"] and hr <= hr_params["warning_high"]):
+        status = "warning"
+        return status
+    elif (hr >= hr_params["alert_high"] or hr <= hr_params["alert_low"]):
+        status = "alert"
+        return status
+    else:
+        status = "no actions needed"
+        return status
+
+def check_param_ST_data(st, trial_params):
+    # st stands for skin_temperature
+    st_params = trial_params["temperature"]
+    if (st > st_params["alert_low"] and st <= st_params["warning_low"]) | (st > st_params["regular_low"] and st <= st_params["warning_high"]):
+        status = "warning"
+        return status
+    elif (st <= st_params["alert_low"] or st > st_params["warning_high"]):
+        status = "alert"
+        return status
+    else:
+        status = "no actions needed"
+        return status
+
+def find_total_status(measurement, status, mac_address, time, database):
+    ''' Compares the status of the current measurement with the status of the last measurement'''
+
+    last_measurement = find_last_doc_from_db(mac_address, database, measurement, time, True)
+    total_status = "no actions needed"
+
+    if last_measurement != None:
+            last_status = last_measurement["status"]
+            last_time = last_measurement["time"]
+            last_time = datetime.fromtimestamp(last_time)
+            time = datetime.fromtimestamp(time)
+            if (time - last_time < timedelta(seconds=3600)):
+                if status == "warning" and last_status == "warning":
+                    total_status = "warning"
+                elif status == "alert" and last_status == "alert":
+                    total_status = "alert"
+                elif (status == "warning" and last_status == "alert") | (status == "alert" and last_status == "warning"):
+                    total_status = "alert"
+
+    return total_status
+
+def calculate_param_rules_on_smartko_data(measurement, value, trial, mac_address, time, database):
+    params = load_params()
+    if trial =="AU":
+        trial_params = params["AU"]
+    
+    # TODO: Need to create general params
+
+    if measurement == "blood_oxygen":
+        status = check_param_BO_data(value, trial_params)
+        total_status = find_total_status("blood_oxygen", status, mac_address, time, database)
+
+    elif measurement == "heart_rate":
+        status = check_param_HR_data(value, trial_params)
+        total_status = find_total_status("heart_rate", status, mac_address, time, database)
+
+    elif measurement == "skin_temperature":
+        status = check_param_ST_data(value, trial_params)
+        total_status = find_total_status("skin_temperature", status, mac_address, time, database)
+    else:
+        status = "no actions needed"
+        total_status = "no actions needed"
+
+    return status, total_status
+
+def find_last_doc_from_db(mac_address, database, measurement, time, less_value):
+    """
+    Finds the last time's (previous or after) measurement status before 120 sec of specific mac address
+    """
+
+    health_collection = database.health
+    list_of_docs = []
+    time_to_use = time-120
+
+    if less_value:
+        query = {"mac_address": mac_address, "measurement": measurement, "time": { "$lt": time_to_use }}
+    else:
+        query = {"mac_address": mac_address, "measurement": measurement, "time": { "$gt": time_to_use }}
+
+    for doc in health_collection.find(query).sort(
+        "time", pymongo.DESCENDING
+    ):
+        doc.pop("_id")
+        list_of_docs.append(doc)
+    if len(list_of_docs) > 0:
+        last_time_doc = list_of_docs[0]
+        return last_time_doc
+    else:
+        return None
+
+# Not used
+def get_measurement_and_convert_time_to_timestamp(measurement):
+    time = measurement["time"]
+    time = datetime.fromtimestamp(time)
+    return time
+
+# Not used
+def check_time_difference(time_1, time_2):
+    if (abs(time_1 - time_2) > timedelta(seconds=120)) & (abs(time_1 - time_2) < timedelta(seconds=3600)):
+        return True
+    else:
+        return False
+
+# TODO: Need to connect and check combined measurements
+def calculate_combined_measurements(mac_address, database, hr, oxy, time):
+    status = "no actions needed"
+    first_doc = None
+    second_doc = None
+    if hr==True:
+        last_time_hr = find_last_doc_from_db(mac_address, database, "heart_rate", time, False)
+        first_doc = last_time_hr
+        if last_time_hr != None:
+            if oxy==True:
+                last_time_oxy = find_last_doc_from_db(mac_address, database, "blood_oxygen", time, False)
+                second_doc = last_time_oxy
+
+                if last_time_oxy != None:
+                    if ((last_time_hr["value"]>100) & (last_time_oxy["value"]<93)) | ((last_time_hr["value"]<60) & (last_time_oxy["value"]<93)):
+                         status = "alert"
+            else:
+                last_time_temp = find_last_doc_from_db(mac_address, database, "skin_temperature", time, False)
+                second_doc = last_time_temp
+                if last_time_temp != None:
+                    if ((last_time_hr["value"]>90) & (last_time_temp["value"]>37.8)) | ((last_time_hr["value"]>90) & (last_time_temp["value"]<35.9)):
+                        status = "alert"
+    else:
+        last_time_oxy = find_last_doc_from_db(mac_address, database, "blood_oxygen", time, False)
+        first_doc = last_time_oxy
+        if last_time_oxy != None:
+            last_time_temp = find_last_doc_from_db(mac_address, database, "skin_temperature", time, False)
+            second_doc = last_time_temp
+            if last_time_temp != None:
+                if ((last_time_oxy["value"]<94) & (last_time_temp["value"]>37.8)) | ((last_time_oxy["value"]<94) & (last_time_temp["value"]<36)):
+                    status = "alert"
+    return status, first_doc, second_doc

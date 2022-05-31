@@ -1,0 +1,47 @@
+trial: AU
+
+AU:
+  heart_rate:
+    alert_low: 49 
+    warning_low: 59
+    regular_low: 100 
+    warning_high: 120
+    alert_high: 121
+
+  blood_oxygen:
+    alert_low: 87 
+    warning_low: 93
+    regular_low: 100
+
+  temperature:
+    alert_low: 34.9
+    warning_low: 35.9
+    regular_low: 37.2
+    warning_high: 38.5
+    alert_high: 38.51
+
+  alert_combinations:
+    hr_oxy: 
+      first:
+        hr_high: 100
+        oxy_low: 93  
+      second:
+        hr_low: 60
+        oxy_low: 93  
+
+    hr_temp: 
+      first:
+        hr_high: 90
+        temp_high: 37.8 
+      second:
+        hr_high: 90
+        temp_low: 35.9
+
+    oxy_temp: 
+      first:
+        oxy_low: 94
+        temp_high: 37.5
+      second:
+        oxy_low: 94
+        temp_low: 36.0
+    
