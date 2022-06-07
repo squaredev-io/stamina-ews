@@ -4,7 +4,7 @@ from pymongo import MongoClient
 from datetime import date, datetime, timedelta
 
 from utils import *
-
+import logging
 class DailyPCRPositivityRateAction:
     """
     Daily PCR positivity rate
@@ -269,6 +269,9 @@ def find_total_status(measurement, status, mac_address, time, database):
     if last_measurement != None:
             last_status = last_measurement["status"]
             last_time = last_measurement["time"]
+        
+            logging.info('Last measurement is: %s', last_measurement)
+
             last_time = datetime.fromtimestamp(last_time)
             time = datetime.fromtimestamp(time)
             if (time - last_time < timedelta(seconds=3600)):
