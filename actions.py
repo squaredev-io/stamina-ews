@@ -278,7 +278,7 @@ def find_total_status(measurement, status, mac_address, time, database):
             print(last_measurement)
             # Timestamp fix /1000
             last_time = datetime.fromtimestamp(last_time/1000)
-            time = datetime.fromtimestamp(time)
+            time = datetime.fromtimestamp(time/1000)
             if (time - last_time < timedelta(seconds=3600)):
                 if status == "warning" and last_status == "warning":
                     total_status = "warning"
