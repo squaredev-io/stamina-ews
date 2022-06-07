@@ -13,6 +13,8 @@ from typing import List
 from utils import *
 import logging
 
+logging.root.setLevel(level=logging.NOTSET)
+
 app = FastAPI()
 origins = [
 "*"
