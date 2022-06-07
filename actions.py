@@ -286,11 +286,12 @@ def find_total_status(measurement, status, mac_address, time, database):
 
 def calculate_param_rules_on_smartko_data(measurement, value, trial, mac_address, time, database):
     params = load_params()
+    logging.info("Calculating param rules")
     if trial =="AU":
         trial_params = params["AU"]
     
     # TODO: Need to create general params
-
+    
     if measurement == "blood_oxygen":
         status = check_param_BO_data(value, trial_params)
         total_status = find_total_status("blood_oxygen", status, mac_address, time, database)

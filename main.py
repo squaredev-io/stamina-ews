@@ -11,7 +11,7 @@ from schemaSkinTemperature import SchemaProperties as schemaST
 import os
 from typing import List
 from utils import *
-
+import logging
 
 app = FastAPI()
 origins = [
@@ -118,7 +118,7 @@ elif trial=="AU":
             print("MongoDB connected successfully!!!")
         except:
             print("Could not connect to MongoDB")
-
+        logging.info("Trial is AU")
         db = conn.ews
         health_collection = db.health
         geolocation_collection = db.geo
