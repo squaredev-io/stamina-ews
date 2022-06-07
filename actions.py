@@ -265,12 +265,12 @@ def find_total_status(measurement, status, mac_address, time, database):
 
     last_measurement = find_last_doc_from_db(mac_address, database, measurement, time, True)
     total_status = "no actions needed"
-
+    logging.warning("Until here")
     if last_measurement != None:
             last_status = last_measurement["status"]
             last_time = last_measurement["time"]
         
-            logging.info('Last measurement is: %s', last_measurement)
+            logging.warning('Last measurement is: %s', last_measurement)
 
             last_time = datetime.fromtimestamp(last_time)
             time = datetime.fromtimestamp(time)
