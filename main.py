@@ -51,7 +51,10 @@ if trial== "General":
         # The list is returned from the API
         # Kafka will get one record at a time
         list_to_return = []
+        print("Received data from API")
+        
         for item in items:
+            print(item)
             measurement = item.measurement
             time = item.time
             tags = dict(item.tags)
