@@ -22,7 +22,7 @@ def serializer(message):
     #return json.dumps(message, default=str)
 
 
-def kafka_producer(message):
+def emt_kafka_producer(message):
 
     producer = Producer(
         {
@@ -38,10 +38,10 @@ def kafka_producer(message):
     message_value = serializer(message_structure)
     message_key = {
          "format": "JSON",
-         "content": "smartko-related-alert",
+         "content": "emt_alerts",
          "sender": "innovation@squaredev.io",
          "host": "squaredev.io",
-         "program": "ews-main.py",
+         "program": "ews.py",
          "timestamp": datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%SZ"),
          "trainingID": ""
      }
@@ -49,7 +49,7 @@ def kafka_producer(message):
     try:
         producer.poll(timeout=0)
         producer.produce(
-            topic="STAMINA.ALL.EWS.EWS",
+            topic="STAMINA.NL.ALL.EWS.COP",
             key=serializer(message_key),
             value=message_value,
             on_delivery=delivery_report
