@@ -1,7 +1,10 @@
+from confuent_consumer import consumer
+from confuent_producer_emt import emt_kafka_producer
 from mongo import db
 import pymongo
 from pymongo import MongoClient
 from datetime import date, datetime, timedelta
+import os
 
 from utils import *
 import logging
@@ -151,6 +154,50 @@ class WSMAAction:
                     document=entry,
                 )
                 return report
+
+
+class DailyEMTReports:
+    def execute(self):
+        print("Running DailyEMTReports")
+        data = consumer()
+        report = self.create_emt_report(data)
+        emt_kafka_producer(report)
+
+
+    
+    def create_emt_report(self, data):
+        connection_string = os.getenv(
+            "CONNECTION_STRING", "mongodb://localhost:27017/stamina_ews"
+        )
+        try:
+            conn = MongoClient(connection_string)
+            print("MongoDB connected successfully!!!")
+        except:
+            print("Could not connect to MongoDB")
+
+        db = conn.ews
+        emt_collection = db.emt
+
+        sample_size = len(data)
+        positives = 0
+        locations = []
+        for datum in data:
+            locations.append(datum["location"])
+            if datum["result"] == "positive":
+                positives += 1
+        positivity_rate = positives / sample_size * 100
+        warning = True
+        alert = False
+        report = {
+            # "id": 336367,
+            "type": "open_water_sample",
+            "value": positivity_rate,
+            "location": locations,
+            "warning": warning,
+            "alert": alert
+        }
+        emt_collection.insert_one(report)
+        return report
 
 
 def check_BO_data(bo):
